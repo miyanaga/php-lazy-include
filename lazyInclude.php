@@ -50,7 +50,7 @@ if (!function_exists('startLazyInclude')) {
       document.body.appendChild(script);
     });
     </script>
-    <?
+    <?php
       // Lazy Includeする側では本体のHTMLは評価しない。
       return true;
     } else {
