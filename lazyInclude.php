@@ -34,8 +34,9 @@ if (!function_exists('startLazyInclude')) {
       // DocumentRootからのURLパスに変換し、format=jsonp&id=(一意のID)をURLパラメータとする。
       $includee_uri = substr_replace($includee_uri, '', 0, strlen($document_root));
       $includee_uri = str_replace(DIRECTORY_SEPARATOR, '/', $includee_uri); // 念のためDSを/に
-      $id = 'lazy-include-' . md5(microtime(true) + rand()); // タイムスタンプと乱数のmd5で一意の文字列を生成
-      $query_string = http_build_query(array('format' => 'jsonp', 'id' => $id));
+      // idはLazy Includeで呼び出されるファイルのEtagのようなものが使い回しが効いてよいかもしれない
+      $id = 'lazy-include-' . md5(microtime(true) + rand());
+      $query_string = http_build_query(array('id' => $id));
 
       // DOMContentLoadedイベントでLazy Includeされる側のJavaScriptコードをJSONPするスクリプトを出力する。
       // scrollイベントなどでもよい。
@@ -71,9 +72,10 @@ if (!function_exists('startLazyInclude')) {
       $content = ob_get_clean();
       // JSONPとして内容を展開する場合はクエリ文字列にformat=jsonp、id=任意のIDを含むこととする。
       if ($_GET['id']) {
-  ?>
+        header('Content-Type: text/javascript');
+?>
   document.getElementById(<?php echo json_encode($_GET['id']) ?>).innerHTML = <? echo json_encode($content) ?>;
-  <?php
+<?php
       } else {
         // クエリ文字列の要件を満たさない場合はLazy IncludeされるHTMLの断片をそのまま出力する(デバッグ用)。
         echo $content;
