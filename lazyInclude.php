@@ -74,7 +74,7 @@ if (!function_exists('startLazyInclude')) {
       if ($_GET['id']) {
         header('Content-Type: text/javascript');
 ?>
-  document.getElementById(<?php echo json_encode($_GET['id']) ?>).innerHTML = <? echo json_encode($content) ?>;
+  document.getElementById(<?php echo json_encode($_GET['id']) ?>).innerHTML = <?php echo json_encode($content) ?>;
 <?php
       } else {
         // クエリ文字列の要件を満たさない場合はLazy IncludeされるHTMLの断片をそのまま出力する(デバッグ用)。
